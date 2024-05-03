@@ -2,11 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePage();
 });
 
-const inventoryKey = 'inventory-zh';
-const equippedItemsKey = 'equippedItems-zh';
 const inventory = loadInventory();
-const equippedItems = loadEquippedItems();
-let luck = calculateInitialLuck(equippedItems); // Calculates luck based on equipped items
+const craftedItems = loadCraftedItems();
 
 const recipes = {
     '齒輪基礎': {'「稀有」': 1, '「常見」':1, '「好」': 1, '「不常見」': 1},
@@ -18,29 +15,37 @@ const recipes = {
 
 function initializePage() {
     updateInventoryDisplay();
+    updateCraftedItemsDisplay();
     updateRecipesDisplay();
 }
 
 function loadInventory() {
-    return JSON.parse(localStorage.getItem(inventoryKey)) || {};
+    return JSON.parse(localStorage.getItem('inventory-zh')) || {};
 }
 
-function loadEquippedItems() {
-    return JSON.parse(localStorage.getItem(equippedItemsKey)) || {};
+function loadCraftedItems() {
+    return JSON.parse(localStorage.getItem('craftedItems-zh')) || {};
 }
 
 function updateInventoryDisplay() {
     const itemsList = document.getElementById('items-list');
     itemsList.innerHTML = '';
     Object.keys(inventory).forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item}: ${inventory[item]}`;
-        if (equippedItems[item]) {
-            li.style.color = 'green';
-            li.textContent += ' (已裝備)';
+        if (!craftedItems[item]) {
+            const li = document.createElement('li');
+            li.textContent = `${item}: ${inventory[item]}`;
+            itemsList.appendChild(li);
         }
-        li.onclick = () => toggleEquipItem(item);
-        itemsList.appendChild(li);
+    });
+}
+
+function updateCraftedItemsDisplay() {
+    const craftedItemsList = document.getElementById('crafted-items-list');
+    craftedItemsList.innerHTML = '';
+    Object.keys(craftedItems).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item}: ${craftedItems[item]}`;
+        craftedItemsList.appendChild(li);
     });
 }
 
@@ -52,13 +57,13 @@ function updateRecipesDisplay() {
         const li = document.createElement('li');
         li.textContent = `${recipeName} - `;
         const details = document.createElement('ul');
-
         Object.keys(recipe).forEach(ingredient => {
-            const ingredientLi = document.createElement('li');
-            ingredientLi.textContent = `${ingredient} x${recipe[ingredient]}`;
-            details.appendChild(ingredientLi);
+            if (ingredient !== 'luck') {
+                const ingredientLi = document.createElement('li');
+                ingredientLi.textContent = `${ingredient} x${recipe[ingredient]}`;
+                details.appendChild(ingredientLi);
+            }
         });
-
         li.appendChild(details);
         const craftButton = document.createElement('button');
         craftButton.textContent = '製作';
@@ -68,31 +73,36 @@ function updateRecipesDisplay() {
     });
 }
 
-function toggleEquipItem(item) {
-    if (equippedItems[item]) {
-        delete equippedItems[item];
-        luck -= recipes[item].luck; // Reduce luck when item is unequipped
+function craftItem(recipeName) {
+    const recipe = recipes[recipeName];
+    if (canCraft(recipe)) {
+        Object.keys(recipe).forEach(item => {
+            if (item !== 'luck' && inventory[item]) {
+                inventory[item] -= recipe[item];
+            }
+        });
+        addToCraftedItems(recipeName, 1);
+        updateInventoryDisplay();
+        updateCraftedItemsDisplay();
+        saveInventory();
+        saveCraftedItems();
     } else {
-        equippedItems[item] = true;
-        luck += recipes[item].luck; // Increase luck when item is equipped
+        alert("材料不足，無法製作 " + recipeName);
     }
-    saveEquippedItems();
-    updateInventoryDisplay();
-    updateLuckDisplay();
 }
 
-function calculateInitialLuck(equipped) {
-    return Object.keys(equipped).reduce((acc, item) => acc + recipes[item].luck, 0);
+function canCraft(recipe) {
+    return Object.keys(recipe).every(item => item !== 'luck' && inventory[item] && inventory[item] >= recipe[item]);
 }
 
-function saveEquippedItems() {
-    localStorage.setItem(equippedItemsKey, JSON.stringify(equippedItems));
+function addToCraftedItems(item, quantity) {
+    craftedItems[item] = (craftedItems[item] || 0) + quantity;
 }
 
 function saveInventory() {
-    localStorage.setItem(inventoryKey, JSON.stringify(inventory));
+    localStorage.setItem('inventory-zh', JSON.stringify(inventory));
 }
 
-function updateLuckDisplay() {
-    document.getElementById('luck-display').textContent = `當前運氣: ${luck}`;
+function saveCraftedItems() {
+    localStorage.setItem('craftedItems-zh', JSON.stringify(craftedItems));
 }
