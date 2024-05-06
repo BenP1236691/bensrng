@@ -71,6 +71,7 @@ const auras = {
 };
 
 // 擲骰功能
+// 擲骰功能
 function rollAura() {
     let totalWeight = 0;
     const weightedAuras = [];
@@ -82,11 +83,13 @@ function rollAura() {
     let random = Math.random() * totalWeight;
     for (const aura of weightedAuras) {
         if (random < aura.weight) {
-            return aura.name;
+            const chance = Math.round(1 / (aura.weight / totalWeight));
+            return { name: aura.name, chance: chance };
         }
         random -= aura.weight;
     }
 }
+
 
 // 添加物品到庫存
 function addItemToInventory(item, quantity) {
@@ -100,20 +103,26 @@ function addItemToInventory(item, quantity) {
 }
 
 // 更新顯示結果
+// 更新顯示結果
 function updateDisplay(result) {
     const resultDisplay = document.getElementById('result-display');
-    resultDisplay.textContent = `你擲出了: ${result}`;
+    resultDisplay.textContent = `你擲出了: ${result.name} (1 in ${result.chance} chance)`;
 }
 
+
+
+// 監聽擲骰按鈕事件
 // 監聽擲骰按鈕事件
 document.getElementById('roll-button').addEventListener('click', function() {
     const result = rollAura();
     updateDisplay(result);
-    addItemToInventory(result, 1);
+    addItemToInventory(result.name, 1);
 });
+
 
 // 自動擲骰開關
 let autoRollInterval = null;
+// 自動擲骰開關
 function toggleAutoRoll() {
     if (autoRollInterval) {
         clearInterval(autoRollInterval);
@@ -123,7 +132,7 @@ function toggleAutoRoll() {
         autoRollInterval = setInterval(() => {
             const result = rollAura();
             updateDisplay(result);
-            addItemToInventory(result, 1);
+            addItemToInventory(result.name, 1);
         }, 1000);  // 每秒擲骰一次
         document.getElementById('auto-roll-button').textContent = '停止自動擲骰';
     }
