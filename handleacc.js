@@ -14,8 +14,8 @@ const firebaseConfig = {
   };
 
 // Initialize Firebase
-const app=initializeApp(firebaseConfig);
-getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 document.addEventListener('DOMContentLoaded', function () {
     var gloginButton = document.getElementById('googleLoginButton');
