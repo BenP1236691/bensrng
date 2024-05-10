@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    
     <div id="game-container">
         <h1>Ben的RNG遊戲</h1>
         <button id="roll-button">單次擲骰</button>
@@ -14,6 +15,33 @@
         <div id="result-display">點擊按鈕來擲骰!</div>
     </div>
     <a href="inventory.html" id="gotoinventory">提升運氣</a>
+    <div id="leaderboard-container">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard"></ul>
+    </div>
+    <div>
+        <h3>Register</h3>
+        <input id="registerEmail" type="email" placeholder="Email">
+        <input id="registerPassword" type="password" placeholder="Password">
+        <button id="register-btn">Register</button>
+      </div>
+      <div id="accounthandler">
+        <h3>Login</h3>
+        <input id="loginEmail" type="email" placeholder="Email">
+        <input id="loginPassword" type="password" placeholder="Password">
+        <button id="login-btn">Login</button>
+        <button id="googleLoginButton">Login with Google</button>
+        
+      </div>
+    
+    
     <script src="script.js"></script>
+    <!-- Include Firebase SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js"></script>
+    <script type="module" src="handleacc.js"></script>
+    
+
 </body>
 </html>

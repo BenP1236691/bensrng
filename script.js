@@ -69,26 +69,55 @@ const auras = {
     '「彈劾」': 200000000,
     '《大天使》': 250000000
 };
+let leaderboard = [
+    { name: "Alice", aura: "「結晶」", value: 64 },
+    { name: "Bob", aura: "「好」", value: 5 },
+    { name: "Carol", aura: "「稀有」", value: 16 }
+];
 
-// 擲骰功能
-// 擲骰功能
-function rollAura() {
+function rollAura(playerName) {
     let totalWeight = 0;
     const weightedAuras = [];
     for (const aura in auras) {
         let weight = 1 / auras[aura];
         totalWeight += weight;
-        weightedAuras.push({ name: aura, weight: weight });
+        weightedAuras.push({ name: aura, weight: weight, value: auras[aura] });
     }
     let random = Math.random() * totalWeight;
     for (const aura of weightedAuras) {
         if (random < aura.weight) {
-            const chance = Math.round(1 / (aura.weight / totalWeight));
-            return { name: aura.name, chance: chance };
+            updateLeaderboard(playerName, aura.name, aura.value);
+            return { name: aura.name, chance: Math.round(1 / (aura.weight / totalWeight)) };
         }
         random -= aura.weight;
     }
 }
+
+function updateLeaderboard(playerName, aura, value) {
+    const playerIndex = leaderboard.findIndex(player => player.name === playerName);
+    if (playerIndex > -1) {
+        if (leaderboard[playerIndex].value < value) {
+            leaderboard[playerIndex].aura = aura;
+            leaderboard[playerIndex].value = value;
+        }
+    } else {
+        leaderboard.push({ name: playerName, aura, value });
+    }
+    leaderboard.sort((a, b) => b.value - a.value); // Sort descending by aura value
+}
+
+
+function displayLeaderboard() {
+    const leaderboardElement = document.getElementById('leaderboard');
+    leaderboardElement.innerHTML = '';
+    leaderboard.forEach(player => {
+        const playerElement = document.createElement('li');
+        playerElement.textContent = `${player.name}: ${player.aura}`;
+        leaderboardElement.appendChild(playerElement);
+    });
+}
+
+
 
 
 // 添加物品到庫存
