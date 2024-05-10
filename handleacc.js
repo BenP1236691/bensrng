@@ -14,7 +14,7 @@ const firebaseConfig = {
   };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
+const app=initializeApp(firebaseConfig);
 getAuth(app);
 
 document.addEventListener('DOMContentLoaded', function () {
