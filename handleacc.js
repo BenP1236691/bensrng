@@ -1,73 +1,54 @@
-// Import Firebase modules
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js';
-console.log("done")
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBazl1TiD0PxEXCPIbqbCwKPUQMd3ZFhpY",
-    authDomain: "bensrng-3fda3.firebaseapp.com",
-    projectId: "bensrng-3fda3",
-    storageBucket: "bensrng-3fda3.appspot.com",
-    messagingSenderId: "578564869865",
-    appId: "1:578564869865:web:1289f93ecbdaa029feaa78",
-    measurementId: "G-DYR9C5GPJK"
-  };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
+// handleacc.js
 document.addEventListener('DOMContentLoaded', function () {
-    var gloginButton = document.getElementById('googleLoginButton');
-    if (gloginButton) {
-        gloginButton.addEventListener('click', googleLogin);
-    }
-    var loginButton = document.getElementById('login-btn');
-    if (loginButton) {
-        loginButton.addEventListener('click', loginUser);
-    }
-    var registerbutton = document.getElementById('register-btn');
-    if (registerbutton) {
-        registerbutton.addEventListener('click', registerUser);
-    }
+  var loginButton = document.getElementById('login-btn');
+  var registerButton = document.getElementById('register-btn');
+
+  if (loginButton) loginButton.addEventListener('click', loginUser);
+  if (registerButton) registerButton.addEventListener('click', registerUser);
 });
 
-// Function to handle Google login
-function googleLogin() {
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      console.log('User signed in:', user.displayName);
-      const msg = document.createElement('p');
-      msg.textContent = 'User signed in: ' + user.displayName;
-      document.body.appendChild(msg);
-    })
-    .catch((error) => {
-      console.error('Google Sign-In Error', error);
-    });
+function registerUser() {
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+
+  fetch('http://108.160.142.73:80/register', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+  })
+  .then(response => response.text())
+  .then(data => alert(data))
+  .catch(error => {
+      console.error('Error:', error);
+      alert('Registration failed. Please try again later.');
+  });
 }
 
-// Register user with email and password
-function registerUser(email, password) {
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log('User registered:', user.email);
-    })
-    .catch((error) => {
-      console.error('Register Error', error.message);
-    });
-}
+function loginUser() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
 
-// Log in user with email and password
-function loginUser(email, password) {
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log('User logged in:', user.email);
-    })
-    .catch((error) => {
-      console.error('Login Error', error.message);
-    });
+  fetch('http://108.160.142.73:80/login', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+  })
+  .then(response => response.text())
+  .then(data => {
+      if (data === 'Login successful') {
+          localStorage.setItem('userEmail', email);
+          alert('Login successful');
+          window.location.href = 'index.html'; // Redirect to main page after login
+      } else {
+          alert(data);
+      }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      alert('Login failed. Please try again later.');
+  });
 }

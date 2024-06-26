@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    
     <div id="game-container">
         <h1>Ben的RNG遊戲</h1>
         <button id="roll-button">單次擲骰</button>
@@ -16,32 +15,48 @@
     </div>
     <a href="inventory.html" id="gotoinventory">提升運氣</a>
     <div id="leaderboard-container">
-        <h2>Leaderboard</h2>
+        <h2>排行榜</h2>
         <ul id="leaderboard"></ul>
     </div>
-    <div>
-        <h3>Register</h3>
-        <input id="registerEmail" type="email" placeholder="Email">
-        <input id="registerPassword" type="password" placeholder="Password">
-        <button id="register-btn">註冊r</button>
-      </div>
-      <div id="accounthandler">
-        <h3>Login</h3>
-        <input id="loginEmail" type="email" placeholder="Email">
-        <input id="loginPassword" type="password" placeholder="Password">
-        <button id="login-btn">登入</button>
-        <button id="googleLoginButton">用Google登入</button>
-        
-      </div>
-    
-    
+    <div id="changelog-container">
+        <h2>更新日誌</h2>
+        <ul id="changelog"></ul>
+    </div>
+    <div id="inventory-container">
+        <h2>庫存</h2>
+        <ul id="items-list"></ul>
+    </div>
+    <script src="shared.js"></script>
     <script src="script.js"></script>
-    <!-- Include Firebase SDKs -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js"></script>
-    <script type="module" src="handleacc.js"></script>
-    
+    <script>
+        function updateInventoryDisplay() {
+            const itemsList = document.getElementById('items-list');
+            if (itemsList) {
+                itemsList.innerHTML = '';
+                Object.keys(inventory).forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item}: ${inventory[item]}`;
+                    const useButton = document.createElement('button');
+                    useButton.textContent = '使用';
+                    useButton.onclick = () => useItem(item);
+                    li.appendChild(useButton);
+                    itemsList.appendChild(li);
+                });
+            }
+        }
 
+        function useItem(item) {
+            if (inventory[item] > 0) {
+                inventory[item] -= 1;
+                alert(`${item} 已使用！`);
+                updateInventoryDisplay();
+                saveInventoryToServer();
+                // Add your custom logic for what happens when an item is used.
+                // For example, increasing luck or other effects.
+            } else {
+                alert(`${item} 數量不足。`);
+            }
+        }
+    </script>
 </body>
 </html>

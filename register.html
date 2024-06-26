@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>註冊</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="register-container">
+        <h1>註冊</h1>
+        <input id="registerEmail" type="email" placeholder="電子郵件">
+        <input id="registerPassword" type="password" placeholder="密碼">
+        <button id="register-btn">註冊</button>
+    </div>
+    <script>
+        document.getElementById('register-btn').addEventListener('click', function() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            fetch('http://108.160.142.73:80/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => {
+                return response.text().then(text => {
+                    if (response.ok) {
+                        alert(text);
+                        window.location.href = 'login.html'; // Redirect to login page after successful registration
+                    } else {
+                        throw new Error(text);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('註冊失敗。請稍後再試。');
+            });
+        });
+    </script>
+</body>
+</html>

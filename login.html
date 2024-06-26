@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="login-container">
+        <h1>登入</h1>
+        <input id="loginEmail" type="email" placeholder="電子郵件">
+        <input id="loginPassword" type="password" placeholder="密碼">
+        <button id="login-btn">登入</button>
+        <p>沒有帳號？<a href="register.html">註冊</a></p>
+    </div>
+    <script>
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            fetch('http://108.160.142.73:80/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => {
+                return response.text().then(text => {
+                    if (response.ok) {
+                        localStorage.setItem('userEmail', email);
+                        alert('登入成功');
+                        window.location.href = 'index.html'; // Redirect to main page after login
+                    } else {
+                        throw new Error(text);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('登入失敗。請稍後再試。');
+            });
+        });
+    </script>
+</body>
+</html>

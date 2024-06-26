@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Add Changelog</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="admin-container" style="display: none;">
+        <h1>Add Changelog Entry</h1>
+        <input id="changelog-title" type="text" placeholder="Title">
+        <textarea id="changelog-content" placeholder="Content"></textarea>
+        <button id="add-changelog-btn">Add Changelog</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (userEmail === 'benjamin20230724@gmail.com') {
+                document.getElementById('admin-container').style.display = 'block';
+            } else {
+                alert('Unauthorized access. Please log in as admin.');
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.getElementById('add-changelog-btn').addEventListener('click', function() {
+            const email = localStorage.getItem('userEmail');
+            if (email !== 'benjamin20230724@gmail.com') {
+                alert('Unauthorized');
+                return;
+            }
+
+            const title = document.getElementById('changelog-title').value;
+            const content = document.getElementById('changelog-content').value;
+
+            fetch('http://108.160.142.73:80/add-changelog', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, title, content })
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
