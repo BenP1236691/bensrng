@@ -10,7 +10,7 @@
     <div id="game-container">
         <h1>Ben的RNG遊戲</h1>
         <button id="roll-button">單次擲骰</button>
-        <button id="auto-roll-button" onclick="toggleAutoRoll()">自動擲骰</button>
+        <button id="auto-roll-button">自動擲骰</button>
         <div id="result-display">點擊按鈕來擲骰!</div>
     </div>
     <a href="inventory.html" id="gotoinventory">提升運氣</a>
@@ -27,36 +27,5 @@
         <ul id="items-list"></ul>
     </div>
     <script src="shared.js"></script>
-    <script src="script.js"></script>
-    <script>
-        function updateInventoryDisplay() {
-            const itemsList = document.getElementById('items-list');
-            if (itemsList) {
-                itemsList.innerHTML = '';
-                Object.keys(inventory).forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = `${item}: ${inventory[item]}`;
-                    const useButton = document.createElement('button');
-                    useButton.textContent = '使用';
-                    useButton.onclick = () => useItem(item);
-                    li.appendChild(useButton);
-                    itemsList.appendChild(li);
-                });
-            }
-        }
-
-        function useItem(item) {
-            if (inventory[item] > 0) {
-                inventory[item] -= 1;
-                alert(`${item} 已使用！`);
-                updateInventoryDisplay();
-                saveInventoryToServer();
-                // Add your custom logic for what happens when an item is used.
-                // For example, increasing luck or other effects.
-            } else {
-                alert(`${item} 數量不足。`);
-            }
-        }
-    </script>
 </body>
 </html>

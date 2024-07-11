@@ -3,15 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Add Changelog</title>
+    <title>Admin - Panel</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="admin-container" style="display: none;">
-        <h1>Add Changelog Entry</h1>
+        <h1>Admin Panel</h1>
+        
+        <h2>Add Changelog Entry</h2>
         <input id="changelog-title" type="text" placeholder="Title">
         <textarea id="changelog-content" placeholder="Content"></textarea>
         <button id="add-changelog-btn">Add Changelog</button>
+        
+        <h2>Add Aura</h2>
+        <input id="aura-name" type="text" placeholder="Aura Name">
+        <input id="aura-value" type="number" placeholder="Aura Value">
+        <button id="add-aura-btn">Add Aura</button>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -34,12 +41,34 @@
             const title = document.getElementById('changelog-title').value;
             const content = document.getElementById('changelog-content').value;
 
-            fetch('http://108.160.142.73:80/add-changelog', {
+            fetch('http://202.182.114.79:1109/add-changelog', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ email, title, content })
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('add-aura-btn').addEventListener('click', function() {
+            const email = localStorage.getItem('userEmail');
+            if (email !== 'benjamin20230724@gmail.com') {
+                alert('Unauthorized');
+                return;
+            }
+
+            const auraName = document.getElementById('aura-name').value;
+            const auraValue = document.getElementById('aura-value').value;
+
+            fetch('http://202.182.114.79:1109/add-aura', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, auraName, auraValue })
             })
             .then(response => response.text())
             .then(data => alert(data))
