@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>註冊</title>
+    <title>Register</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="register-container">
-        <h1>註冊</h1>
-        <input id="registerEmail" type="email" placeholder="電子郵件">
-        <input id="registerPassword" type="password" placeholder="密碼">
-        <button id="register-btn">註冊</button>
+    <div>
+        <h1>Register</h1>
+        <input id="email" type="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button id="register-button">Register</button>
     </div>
     <script>
-        document.getElementById('register-btn').addEventListener('click', function() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
+        document.getElementById('register-button').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-            fetch('http://202.182.114.79:80/register', {
+            fetch('https://202.182.114.79:1109/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -26,18 +26,18 @@
                 body: JSON.stringify({ email, password })
             })
             .then(response => {
-                return response.text().then(text => {
-                    if (response.ok) {
-                        alert(text);
-                        window.location.href = 'login.html'; // Redirect to login page after successful registration
-                    } else {
-                        throw new Error(text);
-                    }
-                });
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                window.location.href = 'login.html';
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('註冊失敗。請稍後再試。');
+                alert('Registration failed. Please try again.');
             });
         });
     </script>

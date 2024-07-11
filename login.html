@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登入</title>
+    <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="login-container">
-        <h1>登入</h1>
-        <input id="loginEmail" type="email" placeholder="電子郵件">
-        <input id="loginPassword" type="password" placeholder="密碼">
-        <button id="login-btn">登入</button>
-        <p>沒有帳號？<a href="register.html">註冊</a></p>
+    <div>
+        <h1>Login</h1>
+        <input id="email" type="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button id="login-button">Login</button>
     </div>
     <script>
-        document.getElementById('login-btn').addEventListener('click', function() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+        document.getElementById('login-button').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-            fetch('http://202.182.114.79:80/login', {
+            fetch('https://202.182.114.79:1109/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -27,19 +26,19 @@
                 body: JSON.stringify({ email, password })
             })
             .then(response => {
-                return response.text().then(text => {
-                    if (response.ok) {
-                        localStorage.setItem('userEmail', email);
-                        alert('登入成功');
-                        window.location.href = 'index.html'; // Redirect to main page after login
-                    } else {
-                        throw new Error(text);
-                    }
-                });
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                localStorage.setItem('userEmail', email);
+                window.location.href = 'index.html';
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('登入失敗。請稍後再試。');
+                alert('Login failed. Please try again.');
             });
         });
     </script>

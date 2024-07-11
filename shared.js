@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    fetch(`http://202.182.114.79:1109/load-inventory?email=${userEmail}`)
+    fetch(`https://202.182.114.79:1109/load-inventory?email=${userEmail}`)
         .then(response => {
             if (!response.ok) {
                 return response.json().then(err => { throw new Error(err.error); });
@@ -181,7 +181,7 @@ function useItem(item) {
 
 function saveInventoryToServer() {
     const userEmail = localStorage.getItem('userEmail');
-    fetch('http://202.182.114.79:1109/save-inventory', {
+    fetch('https://202.182.114.79:1109/save-inventory', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
